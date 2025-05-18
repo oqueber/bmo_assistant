@@ -16,6 +16,12 @@
 #define PIN_SCK  4
 #define PIN_CS   7
 
+
+// Inputs type
+#define EVENT_BTN_1_SHORT	(1 << 0)
+#define EVENT_BTN_1_LONG	(1 << 1)
+#define EVENT_BTN_1_DOBLE	(1 << 2)
+
 typedef enum
 {
 	DISPLAY_FACE_OFF = 0,
@@ -52,3 +58,5 @@ void init_display_task(void * parameter);
 void init_tone_task(void * parameter);
 // Light Task
 void init_light_task(void * parameter);
+// Central task
+void init_central_task(void * parameter);

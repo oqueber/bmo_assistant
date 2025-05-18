@@ -11,15 +11,11 @@
 //ISRs need to have IRAM_ATTR before the function definition to run the interrupt code in RAM.
 IRAM_ATTR void ISR_button_pressed(void);
 
-// Allow switching between animations
-uint8_t index_select_animation = 0;
-
 /* Declare a variable to hold the created event group. */
 EventGroupHandle_t flags_irq;
+// Press type
+EventGroupHandle_t inputs_event;
 
-extern QueueHandle_t display_queue;
-extern QueueHandle_t tone_queue;
-extern QueueHandle_t light_queue;
 
 //
 // BTN SEQUENCE
@@ -28,10 +24,6 @@ extern QueueHandle_t light_queue;
 void btn_detect_press(void)
 {
 	int num_btn_press = 0;
-  // Display msg
-  display_msg_t display_msg = {0, "" };
-  // tone msg
-  uint8_t play_tone = 0;
 
   // Check if it is really pressed
   if(digitalRead(BUTTON_PIN) == 0)
@@ -49,36 +41,18 @@ void btn_detect_press(void)
       }
     }
 
-    // Send diferents animations
-    if( index_select_animation < sizeof(face_animation_t))
-    {
-      index_select_animation++;
-    }
-    else
-    {
-      // Next sequence
-      index_select_animation = DISPLAY_FACE_OFF + 1;
-    }
-
     // SHORT PULSE
     if ( num_btn_press < (LONG_PRESS_DETECTION_AT/DELAY_EACH_DELTA))
     {
-      play_tone = TONE_SUCCESS;
-      display_msg.ucMessageID = index_select_animation;
+      // Send short pressed
+      xEventGroupSetBits(inputs_event, EVENT_BTN_1_SHORT);
     }
     // LONG PULSES
     else
     {	
-      // Display OFF
-      index_select_animation = DISPLAY_FACE_OFF;
-      display_msg.ucMessageID = index_select_animation;
-      play_tone = TONE_ERROR;
+      // Send short pressed
+      xEventGroupSetBits(inputs_event, EVENT_BTN_1_LONG);
     }
-
-      
-    xQueueSend( display_queue, ( void * ) &display_msg, ( TickType_t ) 0 );
-    xQueueSend( tone_queue, ( void * ) &play_tone, ( TickType_t ) 0 );
-    xQueueSend( light_queue, ( void * ) &index_select_animation, ( TickType_t ) 0 );
 
   }
 
@@ -98,6 +72,7 @@ void init_inputs_task(void * parameter){
 
   /* Attempt to create the event group. */
   flags_irq = xEventGroupCreate();
+  inputs_event = xEventGroupCreate();
 
   while (1)
   {
