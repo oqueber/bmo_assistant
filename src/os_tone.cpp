@@ -16,11 +16,11 @@ void play_sound_alarm()
   while (num_beep)
   {
     // PLAY DURATION
-    tone(BUZZZER_PIN, 10000, 100);
+    ledcWriteTone(TONE_CHANNEL, 10000);
     vTaskDelay(100);
 
     // PAUSE
-    noTone(BUZZZER_PIN);
+    ledcWriteTone(TONE_CHANNEL, 0);
     vTaskDelay(50);
     num_beep--;
   }
@@ -34,11 +34,11 @@ void play_sound_success()
   while (num_beep)
   {
     // PLAY DURATION
-    tone(BUZZZER_PIN, 2700, 100);
+    ledcWriteTone(TONE_CHANNEL, 2700);
     vTaskDelay(100);
 
     // PAUSE
-    noTone(BUZZZER_PIN);
+    ledcWriteTone(TONE_CHANNEL, 0);
     vTaskDelay(25);
     num_beep--;
   }
@@ -52,11 +52,11 @@ void play_sound_error()
   while (num_beep)
   {
     // PLAY DURATION
-    tone(BUZZZER_PIN, 100, 100);
+    ledcWriteTone(TONE_CHANNEL, 100);
     vTaskDelay(100);
 
     // PAUSE
-    noTone(BUZZZER_PIN);
+    ledcWriteTone(TONE_CHANNEL,0);
     vTaskDelay(100);
     num_beep--;
   }
@@ -70,11 +70,11 @@ void play_sound()
   while (num_beep)
   {
     // PLAY DURATION
-    tone(BUZZZER_PIN, 1000, 100);
+    ledcWriteTone(TONE_CHANNEL, 1000);
     vTaskDelay(100);
 
     // PAUSE
-    noTone(BUZZZER_PIN);
+    ledcWriteTone(TONE_CHANNEL,0);
     vTaskDelay(200);
     num_beep--;
   }
@@ -89,8 +89,11 @@ void init_tone_task(void * parameter){
 
   uint8_t tone_play;
 
-  // initialize Buzzer pin as an output.
-  pinMode(BUZZZER_PIN, OUTPUT);
+  // Configura el canal para el tono
+  ledcSetup(TONE_CHANNEL, TONE_FREQUENCY, TONE_RESOLUTION);
+
+  // Asocia el canal al pin del buzzer
+  ledcAttachPin(BUZZER_PIN, TONE_CHANNEL);
 
   /* Attempt to create the event group. */
   tone_queue = xQueueCreate( 10, sizeof( uint8_t ) );

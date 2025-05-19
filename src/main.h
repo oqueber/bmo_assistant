@@ -4,7 +4,10 @@
 #define NUM_LEDS    4
 #define DATA_PIN    8
 // The ESP32C3 pin connected to buzzer
-#define BUZZZER_PIN   0
+#define BUZZER_PIN    	0
+#define TONE_CHANNEL 	3    // Canal de PWM (0-7 en ESP32-C3)
+#define TONE_RESOLUTION 8 // Bits de resolución
+#define TONE_FREQUENCY 1000 // Frecuencia inicial en Hz
 // The ESP32C3 pin connected to buttom.
 #define BUTTON_PIN    1
 //Display pinout
@@ -15,6 +18,9 @@
 #define PIN_MOSI 6
 #define PIN_SCK  4
 #define PIN_CS   7
+// Servo
+#define SERVO_PIN 9
+
 
 
 // Inputs type
@@ -58,5 +64,7 @@ void init_display_task(void * parameter);
 void init_tone_task(void * parameter);
 // Light Task
 void init_light_task(void * parameter);
+// Servo motor
+void init_servo_task(void * parameter);
 // Central task
 void init_central_task(void * parameter);

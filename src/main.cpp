@@ -157,7 +157,10 @@ void setup()
   xTaskCreate(&init_display_task,"display",(1024*3), NULL,1,NULL );
   xTaskCreate(&init_tone_task,"tone",(1024*3), NULL,1,NULL );
   xTaskCreate(&init_light_task,"light",(1024*2),NULL,1,NULL);
+  xTaskCreate(&init_servo_task,"light",(1024*2),NULL,1,NULL);
   xTaskCreate(&init_central_task,"centrl",(1024*2),NULL,1,NULL);
+
+  
 }
 
 
