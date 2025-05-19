@@ -3,7 +3,7 @@
 // Common cofig
 #include "main.h"
 
-#define DELAY_EACH_DELTA          10 // 10ms
+#define DELAY_EACH_DELTA          50     // 50ms
 #define WINDOW_MS                 600    // Ventana de 1 s
 
 #define EVENT_BTN_PRESSED    (1 << 0)
@@ -66,6 +66,11 @@ void btn_detect_press(void)
     Serial.println("Botón presionado (SHORT)");
   }
   
+  // Wait until btn is release
+  while (digitalRead(BUTTON_PIN) == LOW) 
+  {vTaskDelay(pdMS_TO_TICKS(200));}
+  vTaskDelay(pdMS_TO_TICKS(200));
+
   attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), ISR_button_pressed, FALLING);
 }
 
