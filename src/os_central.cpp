@@ -23,7 +23,7 @@ void init_central_task(void * parameter){
   {
     EventBits_t bits = xEventGroupWaitBits(
       inputs_event,
-      (EVENT_BTN_1_SHORT | EVENT_BTN_1_LONG | EVENT_BTN_1_DOBLE),
+      (EVENT_BTN_1_SHORT | EVENT_BTN_1_LONG | EVENT_BTN_1_DOUBLE),
       pdTRUE,     // Borra los bits al salir
       pdFALSE,    // Espera cualquier bit
       portMAX_DELAY
@@ -60,7 +60,7 @@ void init_central_task(void * parameter){
     }
 
     // When a double pulsation arrived -> new display animation
-    if (bits & EVENT_BTN_1_DOBLE) {
+    if (bits & EVENT_BTN_1_DOUBLE) {
 
       // Send diferents animations
       if( index_double < sizeof(face_animation_t))

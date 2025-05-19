@@ -26,7 +26,7 @@
 // Inputs type
 #define EVENT_BTN_1_SHORT	(1 << 0)
 #define EVENT_BTN_1_LONG	(1 << 1)
-#define EVENT_BTN_1_DOBLE	(1 << 2)
+#define EVENT_BTN_1_DOUBLE	(1 << 2)
 
 typedef enum
 {

@@ -85,12 +85,13 @@ void setup()
   Serial.begin(115200);
 
   uint8_t num_wifi_errors = 0;
-  // initialize LED digital pin as an output.
-  //pinMode(LED_PIN, OUTPUT);
-
 
   WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) delay(500);
+  while ((WiFi.status() != WL_CONNECTED) && (num_wifi_errors < 5))
+  {
+    delay(500);
+    num_wifi_errors++;
+  }
 
   Serial.println("Conectado: " + WiFi.localIP().toString());
 
@@ -152,6 +153,7 @@ void setup()
     Serial.println("Error iniciando mDNS");
   }
 
+  Serial.println("start freertos");
 
   xTaskCreate(&init_inputs_task,"inputs",(1024*3), NULL,1,NULL );
   xTaskCreate(&init_display_task,"display",(1024*3), NULL,1,NULL );

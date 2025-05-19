@@ -3,8 +3,8 @@
 // Common cofig
 #include "main.h"
 
-#define LONG_PRESS_DETECTION_AT   2000 // 2seconds
-#define DELAY_EACH_DELTA          100 // 100ms
+#define DELAY_EACH_DELTA          10 // 10ms
+#define WINDOW_MS                 600    // Ventana de 1 s
 
 #define EVENT_BTN_PRESSED    (1 << 0)
 
@@ -23,41 +23,50 @@ EventGroupHandle_t inputs_event;
 
 void btn_detect_press(void)
 {
-	int num_btn_press = 0;
+  // Variables de conteo en cada ventana
+  uint8_t clickCount    = 0; // If arrived here, it's a pulsation already.
+  uint8_t longDetected  = 0;
+  bool    btn_n0 = false, btn_n1 = false;
 
-  // Check if it is really pressed
-  if(digitalRead(BUTTON_PIN) == 0)
-  {
-    // Check if it is a short or long press
-    while(digitalRead(BUTTON_PIN) == 0)
+  TickType_t windowStart = xTaskGetTickCount();
+
+  // Escuchar durante WINDOW_MS
+  while ((xTaskGetTickCount() - windowStart) < pdMS_TO_TICKS(WINDOW_MS)) {
+    
+    // BTN now
+    btn_n0 = (digitalRead(BUTTON_PIN) == LOW);
+
+    // Click detected 
+    if ((btn_n0 == true) && (btn_n1 == false)) {
+      clickCount++;
+    }
+    else if ((btn_n0 == true) && (btn_n1 == true))
     {
-      num_btn_press++;
-      vTaskDelay(DELAY_EACH_DELTA);
-
-      // Detected long pressed button
-      if( num_btn_press >= (LONG_PRESS_DETECTION_AT/DELAY_EACH_DELTA))
-      {
-        break;
-      }
+      longDetected++;
     }
 
-    // SHORT PULSE
-    if ( num_btn_press < (LONG_PRESS_DETECTION_AT/DELAY_EACH_DELTA))
-    {
-      // Send short pressed
-      xEventGroupSetBits(inputs_event, EVENT_BTN_1_SHORT);
-    }
-    // LONG PULSES
-    else
-    {	
-      // Send short pressed
-      xEventGroupSetBits(inputs_event, EVENT_BTN_1_LONG);
-    }
+    // save the last value 
+    btn_n1 = btn_n0;
 
+    // Next Sequence
+    vTaskDelay(pdMS_TO_TICKS(DELAY_EACH_DELTA));
   }
 
-	// Enable button
-	attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), ISR_button_pressed, FALLING );
+  // Procesar resultados de la ventana
+  if (longDetected >= (WINDOW_MS / DELAY_EACH_DELTA) - 5 ) {
+    xEventGroupSetBits(inputs_event, EVENT_BTN_1_LONG);
+    Serial.println("Botón presionado (LONG)");
+  }
+  else if (clickCount > 1) {
+    xEventGroupSetBits(inputs_event, EVENT_BTN_1_DOUBLE);
+    Serial.println("Botón presionado (DOUBLE)");
+  }
+  else {
+    xEventGroupSetBits(inputs_event, EVENT_BTN_1_SHORT);
+    Serial.println("Botón presionado (SHORT)");
+  }
+  
+  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), ISR_button_pressed, FALLING);
 }
 
 
@@ -85,7 +94,7 @@ void init_inputs_task(void * parameter){
     );
 
     if (bits & EVENT_BTN_PRESSED) {
-      Serial.println("Botón presionado (evento)");
+      
       
       btn_detect_press();
 
