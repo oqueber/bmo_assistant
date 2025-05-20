@@ -87,6 +87,7 @@ void setup()
   uint8_t num_wifi_errors = 0;
 
   WiFi.begin(ssid, password);
+  WiFi.setTxPower(WIFI_POWER_8_5dBm);
   while ((WiFi.status() != WL_CONNECTED) && (num_wifi_errors < 5))
   {
     delay(500);
