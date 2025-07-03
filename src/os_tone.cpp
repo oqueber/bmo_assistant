@@ -4,6 +4,12 @@
 
 QueueHandle_t tone_queue;
 
+
+#if BUZZER_AS_VIBRATION 
+#define  DELAY_PAUSE 800
+#else
+#define  DELAY_PAUSE 100
+#endif
 //
 // BUZZER
 // 
@@ -17,11 +23,11 @@ void play_sound_alarm()
   {
     // PLAY DURATION
     ledcWriteTone(TONE_CHANNEL, 10000);
-    vTaskDelay(100);
+    vTaskDelay(DELAY_PAUSE);
 
     // PAUSE
     ledcWriteTone(TONE_CHANNEL, 0);
-    vTaskDelay(50);
+    vTaskDelay(DELAY_PAUSE/2);
     num_beep--;
   }
 }
@@ -35,11 +41,11 @@ void play_sound_success()
   {
     // PLAY DURATION
     ledcWriteTone(TONE_CHANNEL, 2700);
-    vTaskDelay(100);
+    vTaskDelay(DELAY_PAUSE);
 
     // PAUSE
     ledcWriteTone(TONE_CHANNEL, 0);
-    vTaskDelay(25);
+    vTaskDelay(DELAY_PAUSE/4);
     num_beep--;
   }
 }
@@ -53,11 +59,11 @@ void play_sound_error()
   {
     // PLAY DURATION
     ledcWriteTone(TONE_CHANNEL, 100);
-    vTaskDelay(100);
+    vTaskDelay(DELAY_PAUSE);
 
     // PAUSE
     ledcWriteTone(TONE_CHANNEL,0);
-    vTaskDelay(100);
+    vTaskDelay(DELAY_PAUSE);
     num_beep--;
   }
 }
@@ -71,11 +77,11 @@ void play_sound()
   {
     // PLAY DURATION
     ledcWriteTone(TONE_CHANNEL, 1000);
-    vTaskDelay(100);
+    vTaskDelay(DELAY_PAUSE);
 
     // PAUSE
     ledcWriteTone(TONE_CHANNEL,0);
-    vTaskDelay(200);
+    vTaskDelay(DELAY_PAUSE*2);
     num_beep--;
   }
 }

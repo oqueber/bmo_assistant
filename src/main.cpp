@@ -162,7 +162,7 @@ void setup()
   xTaskCreate(&init_light_task,"light",(1024*2),NULL,1,NULL);
   xTaskCreate(&init_servo_task,"light",(1024*2),NULL,1,NULL);
   xTaskCreate(&init_central_task,"centrl",(1024*2),NULL,1,NULL);
-
+  xTaskCreate(&init_console_task, "ConsoleTask", 2048, NULL, 1, NULL);
   
 }
 

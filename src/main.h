@@ -4,7 +4,8 @@
 #define NUM_LEDS    4
 #define DATA_PIN    8
 // The ESP32C3 pin connected to buzzer
-#define BUZZER_PIN    	0
+#define BUZZER_PIN    	10
+#define BUZZER_AS_VIBRATION 1
 #define TONE_CHANNEL 	3    // Canal de PWM (0-7 en ESP32-C3)
 #define TONE_RESOLUTION 8 // Bits de resolución
 #define TONE_FREQUENCY 1000 // Frecuencia inicial en Hz
@@ -68,3 +69,5 @@ void init_light_task(void * parameter);
 void init_servo_task(void * parameter);
 // Central task
 void init_central_task(void * parameter);
+// Console task
+void init_console_task(void * parameter);
