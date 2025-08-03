@@ -1,12 +1,13 @@
 // Standart lib
 #include "Arduino.h"
 #include "main.h"
+#include <Wire.h>
 
 extern QueueHandle_t display_queue;
 extern QueueHandle_t tone_queue;
 extern QueueHandle_t light_queue;
 extern EventGroupHandle_t inputs_event;
-
+extern bool mpu_log_enable;
 
 typedef void (*CommandHandler)(const String& arg);
 
@@ -15,7 +16,34 @@ struct Command {
   CommandHandler handler;
 };
 
+void scan_iic(void)
+{
+  for (uint8_t addr = 1; addr < 127; addr++) {
+    Wire.beginTransmission(addr);
+    if (Wire.endTransmission() == 0) {
+      Serial.print("Encontrado en: 0x");
+      Serial.println(addr, HEX);
+    }
+  }
+}
 // ==== Handlers ====
+
+void handleLogs(const String& arg) {
+  uint8_t play_tone = 0;
+
+  if (arg == "mpu") {
+    mpu_log_enable = !mpu_log_enable;
+    if(mpu_log_enable == true) 
+      Serial.println("mpu log: Enable");
+    else
+      Serial.println("mpu log: Disable");
+
+  } else {
+    Serial.println("❌ log no reconocido.");
+  }
+
+  xQueueSend( tone_queue, ( void * ) &play_tone, ( TickType_t ) 0 );
+}
 
 void handleTone(const String& arg) {
   uint8_t play_tone = 0;
@@ -66,6 +94,7 @@ void handleReboot(const String& arg) {
 Command commands[] = {
   {"tone", handleTone},
   {"face", handleFace},
+  {"logs", handleLogs},
   {"reboot", handleReboot},
 };
 

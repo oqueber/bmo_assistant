@@ -1,0 +1,72 @@
+$fn = 100; // suavidad
+
+
+include <../../components/lcd128x64/lcd_screen.scad> 
+
+include <BOSL2/std.scad>
+
+head_thickness = 1.5;
+head_border_radius = 5;
+head_height = 33;
+head_width =  33;
+
+
+module head(
+    head_thickness = head_thickness,
+    head_height = head_height,
+    head_width =  head_width,
+    head_border_radius = head_border_radius,
+)
+{
+    difference(){
+
+        difference(){
+            translate([head_border_radius,head_border_radius,0])
+            linear_extrude( height = head_height) {
+                minkowski() {
+                    square([
+                        head_width - 2*head_border_radius, 
+                        head_width - 2*head_border_radius
+                    ]);
+                    circle(head_border_radius);
+                }
+            }
+ 
+        translate([head_width/2 +7,29,23.5])
+        rotate([90,0,0])
+            linear_extrude(height=2*head_width, center=true) {
+                difference()  {square(10);circle(d=20);} // square and not circle
+            }
+        }
+
+
+        translate([1,1,-1])
+            translate([head_border_radius,head_border_radius,0])
+                linear_extrude( height = head_height-1) {
+                    minkowski() {
+                        square([
+                            head_width - 2*head_border_radius - 4.7, 
+                            head_width - 2*head_border_radius - 2
+                        ]);
+                        circle(head_border_radius);
+                    }
+ 
+                }
+    }
+}
+
+difference() 
+{
+    head(
+        head_thickness = head_thickness,
+        head_height = head_height,
+        head_width = head_width,
+        head_border_radius = head_border_radius
+    );
+
+    move([head_width - 4.5, head_width - head_border_radius/2 - 1, head_height * 0.85]) 
+    yrot(90)
+    zrot(270)
+    oled_display_26x26(26,26);
+
+}

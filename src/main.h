@@ -71,3 +71,5 @@ void init_servo_task(void * parameter);
 void init_central_task(void * parameter);
 // Console task
 void init_console_task(void * parameter);
+// Accelerometer task
+void init_mpu_task(void * parameter);

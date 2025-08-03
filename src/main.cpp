@@ -75,27 +75,8 @@ DynamicJsonDocument cargarMensajes() {
   return doc;
 }
 
-
-//
-// SETUP
-//
-
-void setup()
+int wifi_server_init(void)
 {
-  Serial.begin(115200);
-
-  uint8_t num_wifi_errors = 0;
-
-  WiFi.begin(ssid, password);
-  WiFi.setTxPower(WIFI_POWER_8_5dBm);
-  while ((WiFi.status() != WL_CONNECTED) && (num_wifi_errors < 5))
-  {
-    delay(500);
-    num_wifi_errors++;
-  }
-
-  Serial.println("Conectado: " + WiFi.localIP().toString());
-
   // Inicializar SPI con pines personalizados
   if (!SD.begin()) {
     Serial.println("Fallo al iniciar SD con pines personalizados");
@@ -152,7 +133,31 @@ void setup()
   
   if (!MDNS.begin("asistente")) {  // reemplaza "asistente" por el nombre que quieras
     Serial.println("Error iniciando mDNS");
+    return -1;
   }
+
+  return 0;
+}
+
+//
+// SETUP
+//
+
+void setup()
+{
+  Serial.begin(115200);
+
+  uint8_t num_wifi_errors = 0;
+
+  WiFi.begin(ssid, password);
+  WiFi.setTxPower(WIFI_POWER_8_5dBm);
+  while ((WiFi.status() != WL_CONNECTED) && (num_wifi_errors < 5))
+  {
+    delay(500);
+    num_wifi_errors++;
+  }
+
+  Serial.println("Conectado: " + WiFi.localIP().toString());
 
   Serial.println("start freertos");
 
@@ -163,6 +168,7 @@ void setup()
   xTaskCreate(&init_servo_task,"light",(1024*2),NULL,1,NULL);
   xTaskCreate(&init_central_task,"centrl",(1024*2),NULL,1,NULL);
   xTaskCreate(&init_console_task, "ConsoleTask", 2048, NULL, 1, NULL);
+  xTaskCreate(&init_mpu_task, "MPU", 2048, NULL, 1, NULL);
   
 }
 

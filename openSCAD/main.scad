@@ -1,5 +1,5 @@
 include <BOSL2/std.scad>
-include <../backups/components/lcd128x64/lcd_screen.scad>
+include <components/lcd128x64/lcd_screen.scad>
 include <body.scad>
 
 head_chamfer = 1.7;
